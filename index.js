@@ -5,7 +5,9 @@ import { PrismaClient } from "@prisma/client";
 const app = express()
 app.use(bodyParser.json()) // Returns middleware that only parses json and only looks at requests where the Content-Type header matches the type option.
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient({
+    log: ["query"]
+})
 
 app.post('/articles', async (req, res) => {
     /*
@@ -20,6 +22,32 @@ app.post('/articles', async (req, res) => {
         data: req.body
     })
     res.json({ success: true })
+})
+
+app.get('/articles', async (req, res) => {
+    // 1.retrieve all articles
+    const articles = await prisma.article.findMany()
+    res.json(articles)
+})
+
+// app.get('/articles/:id', async (req, res) => {
+//     // 2.retrieve a particular article
+//     const article = await prisma.article.findFirst({
+//         where: {
+//             id: +req.params.id
+//         }
+//     })
+//     res.json(article)
+// })
+
+app.get('/articles/:state', async (req, res) => {
+    // 3. retrieve articles based on a condition (fetch all articles in DRAFT state)
+    const articles = await prisma.article.findMany({
+        where: {
+            state: `${req.params.state}`
+        }
+    })
+    res.json(articles)
 })
 
 app.get('/', (req, res) => res.send("Hello, World!"))
