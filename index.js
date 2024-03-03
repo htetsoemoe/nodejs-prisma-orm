@@ -50,14 +50,32 @@ app.get('/articles/state/:state', async (req, res) => {
     res.json(articles)
 })
 
-app.put('/articles/:id', async (req, res) => {
-    const updatedArticle = await prisma.article.update({
+// Update Single Record with Prisma ORM
+// app.put('/articles/:id', async (req, res) => {
+//     const updatedArticle = await prisma.article.update({
+//         where: {
+//             id: +req.params.id
+//         },
+//         data: req.body
+//     })
+//     res.json(updatedArticle)
+// })
+
+// Update Multiple Records with Prisma ORM
+app.put('/articles/:ids', async (req, res) => {
+    //"1,2,3,4" => ["1", "2", "3", "4"] => [1,2,3,4]
+    const ids = req.params.ids.split(',').map(id => +id)
+
+    const updatedArticles = await prisma.article.updateMany({
         where: {
-            id: +req.params.id
+            id: {
+                in: ids
+            }
         },
         data: req.body
     })
-    res.json(updatedArticle)
+
+    res.json(updatedArticles) // updatedArticles are numbers of updated records
 })
 
 app.get('/', (req, res) => res.send("Hello, World!"))
