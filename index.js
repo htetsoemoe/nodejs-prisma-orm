@@ -78,6 +78,21 @@ app.put('/articles/:ids', async (req, res) => {
     res.json(updatedArticles) // updatedArticles are numbers of updated records
 })
 
+// Delete Record with Prisma ORM
+app.delete('/articles/:id', async (req, res) => {
+    const deletedArticle = await prisma.article.delete({
+        where: {
+            id: +req.params.id
+        }
+    })
+    res.json(deletedArticle)
+
+    // delete all records
+    // const count = await prisma.article.deleteMany({})
+    // res.json(count)
+
+})
+
 app.get('/', (req, res) => res.send("Hello, World!"))
 
 app.listen(3500, () => console.log("Server is running on port 3500"))
