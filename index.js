@@ -30,17 +30,17 @@ app.get('/articles', async (req, res) => {
     res.json(articles)
 })
 
-// app.get('/articles/:id', async (req, res) => {
-//     // 2.retrieve a particular article
-//     const article = await prisma.article.findFirst({
-//         where: {
-//             id: +req.params.id
-//         }
-//     })
-//     res.json(article)
-// })
+app.get('/articles/:id', async (req, res) => {
+    // 2.retrieve a particular article
+    const article = await prisma.article.findFirst({
+        where: {
+            id: +req.params.id
+        }
+    })
+    res.json(article)
+})
 
-app.get('/articles/:state', async (req, res) => {
+app.get('/articles/state/:state', async (req, res) => {
     // 3. retrieve articles based on a condition (fetch all articles in DRAFT state)
     const articles = await prisma.article.findMany({
         where: {
@@ -48,6 +48,16 @@ app.get('/articles/:state', async (req, res) => {
         }
     })
     res.json(articles)
+})
+
+app.put('/articles/:id', async (req, res) => {
+    const updatedArticle = await prisma.article.update({
+        where: {
+            id: +req.params.id
+        },
+        data: req.body
+    })
+    res.json(updatedArticle)
 })
 
 app.get('/', (req, res) => res.send("Hello, World!"))
