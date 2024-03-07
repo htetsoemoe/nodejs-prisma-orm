@@ -93,6 +93,19 @@ app.delete('/articles/:id', async (req, res) => {
 
 })
 
+// Insert nested data 
+app.post('/users', async (req, res) => {
+    await prisma.user.create({
+        data: {
+            email: req.body.email,
+            articles: {
+                create: req.body.articles
+            }
+        }
+    })
+    res.json({ success: true })
+})
+
 app.get('/', (req, res) => res.send("Hello, World!"))
 
 app.listen(3500, () => console.log("Server is running on port 3500"))
