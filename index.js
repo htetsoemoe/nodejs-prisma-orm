@@ -106,6 +106,13 @@ app.post('/users', async (req, res) => {
     res.json({ success: true })
 })
 
+// SQL native query in prisma orm
+app.get('/users/:userId/articles', async (req, res) => {
+    // const articles = await prisma.$queryRaw`SELECT * FROM articles WHERE userId = ${req.params.userId}`
+    const articles = await prisma.$queryRaw`SELECT * FROM articles INNER JOIN user ON articles.userId = user.id WHERE user.id = ${req.params.userId}`
+    res.json(articles)
+})
+
 app.get('/', (req, res) => res.send("Hello, World!"))
 
 app.listen(3500, () => console.log("Server is running on port 3500"))
