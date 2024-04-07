@@ -24,11 +24,11 @@ app.post('/articles', async (req, res) => {
     res.json({ success: true })
 })
 
-app.get('/articles', async (req, res) => {
-    // 1.retrieve all articles
-    const articles = await prisma.article.findMany()
-    res.json(articles)
-})
+// app.get('/articles', async (req, res) => {
+//     // 1.retrieve all articles
+//     const articles = await prisma.article.findMany()
+//     res.json(articles)
+// })
 
 app.get('/articles/:id', async (req, res) => {
     // 2.retrieve a particular article
@@ -48,6 +48,15 @@ app.get('/articles/state/:state', async (req, res) => {
         }
     })
     res.json(articles)
+})
+
+// Pagination (/articles?skip=0&take=5)
+app.get('/articles/', async(req, res) => {
+    const result = await prisma.article.findMany({
+        skip: parseInt(req.query.skip),
+        take: parseInt(req.query.take)
+    })
+    res.status(200).json(result)
 })
 
 // Update Single Record with Prisma ORM
