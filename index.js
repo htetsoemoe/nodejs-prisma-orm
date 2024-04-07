@@ -7,6 +7,27 @@ app.use(bodyParser.json()) // Returns middleware that only parses json and only 
 
 const prisma = new PrismaClient({
     log: ["query"]
+}).$extends({
+    result: {
+        profile: {
+            fullAddress: {
+                need: {
+                    name: true,
+                    address: true,
+                    phone: true
+                },
+                compute: (profile) => {
+                    return `${profile.name} ${profile.address} ${profile.phone}`
+                }
+            },
+        }
+    }
+})
+
+// Computed fields
+app.get('/users', async (req, res) => {
+    const profile = await prisma.profile.findFirst()
+    res.status(200).json(profile)
 })
 
 app.post('/articles', async (req, res) => {
@@ -51,7 +72,7 @@ app.get('/articles/state/:state', async (req, res) => {
 })
 
 // Pagination (/articles?skip=0&take=5)
-app.get('/articles/', async(req, res) => {
+app.get('/articles/', async (req, res) => {
     const result = await prisma.article.findMany({
         skip: parseInt(req.query.skip),
         take: parseInt(req.query.take)
@@ -116,11 +137,11 @@ app.post('/users', async (req, res) => {
 })
 
 // SQL native query in prisma orm
-app.get('/users/:userId/articles', async (req, res) => {
-    // const articles = await prisma.$queryRaw`SELECT * FROM articles WHERE userId = ${req.params.userId}`
-    const articles = await prisma.$queryRaw`SELECT * FROM articles INNER JOIN user ON articles.userId = user.id WHERE user.id = ${req.params.userId}`
-    res.json(articles)
-})
+// app.get('/users/:userId/articles', async (req, res) => {
+//     // const articles = await prisma.$queryRaw`SELECT * FROM articles WHERE userId = ${req.params.userId}`
+//     const articles = await prisma.$queryRaw`SELECT * FROM articles INNER JOIN user ON articles.userId = user.id WHERE user.id = ${req.params.userId}`
+//     res.json(articles)
+// })
 
 app.get('/', (req, res) => res.send("Hello, World!"))
 
