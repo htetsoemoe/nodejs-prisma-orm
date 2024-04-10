@@ -60,6 +60,52 @@ app.post('/users/:userId/articles', async (req, res) => {
     }
 })
 
+// Diving deep into queries in prisma orm
+app.get(`/users/:id/articles`, async (req, res) => {
+    // Fetch all articles and profile of a specified user
+    const user = await prisma.user.findFirst({
+        where: {
+            id: parseInt(req.params.id)
+        },
+        include: {
+            articles: true,
+            profile: true
+        }
+    })
+    res.status(200).json(user)
+
+    // Count articles of each user
+    /*
+    const users = await prisma.user.findMany({
+            include: {
+                _count: {
+                    select: {
+                        articles: true
+                    }
+                }
+            }
+        })
+    res.status(200).json(users)
+    */
+
+    // Delete 'DRAFT' state articles of a specified user
+    /*
+    const result = await prisma.user.update({
+            where: {
+                id: parseInt(req.params.id)
+            },
+            data: {
+                articles: {
+                    deleteMany: {
+                        state: 'DRAFT'
+                    }
+                }
+            }
+        })
+        res.status(200).json(result)
+    */
+})
+
 // Computed fields
 // app.get('/users', async (req, res) => {
 //     const profile = await prisma.profile.findFirst()
